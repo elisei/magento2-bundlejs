@@ -38,8 +38,6 @@ class BundleByType extends AbstractModel
 
     /**
      * @inheritdoc
-     *
-     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      */
     protected function _construct()
     {

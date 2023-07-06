@@ -11,8 +11,6 @@ class ContextsConfig extends AbstractModel
 {
     /**
      * @inheritDoc
-     *
-     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      */
     protected function _construct()
     {

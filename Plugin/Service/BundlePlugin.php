@@ -32,8 +32,6 @@ class BundlePlugin
      * @param Bundle $subject
      * @param mixed  $result
      * @return Data
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function afterGetBundleHelperByPlugin(Bundle $subject, $result)
     {
