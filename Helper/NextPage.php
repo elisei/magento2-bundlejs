@@ -27,9 +27,6 @@ use PureMashiro\BundleJs\Model\ResourceModel\BundleByPage\CollectionFactory as B
 use PureMashiro\BundleJs\Helper\Config as ConfigHelper;
 use PureMashiro\BundleJs\Model\ResourceModel\BundleByType as ResourceBundleByType;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
 class NextPage
 {
     public const CMS_PATH = '';
@@ -50,17 +47,17 @@ class NextPage
     /**
      * @var BundleByPageCollectionFactory
      */
-    private $bundleByPage;
+    private $bundleByPageCollectionFactory;
 
     /**
      * @var CategoryCollectionFactory
      */
-    private $categoryCollection;
+    private $categoryCollectionFactory;
 
     /**
      * @var ProductCollectionFactory
      */
-    private $productCollection;
+    private $productCollectionFactory;
 
     /**
      * @var Stock
@@ -104,10 +101,9 @@ class NextPage
 
     /**
      * NextPage constructor.
-     *
-     * @param BundleByPageCollectionFactory $bundleByPage
-     * @param CategoryCollectionFactory $categoryCollection
-     * @param ProductCollectionFactory $productCollection
+     * @param BundleByPageCollectionFactory $bundleByPageCollectionFactory
+     * @param CategoryCollectionFactory $categoryCollectionFactory
+     * @param ProductCollectionFactory $productCollectionFactory
      * @param Stock $stockHelper
      * @param CheckoutSession $checkoutSession
      * @param CheckoutHelper $checkoutHelper
@@ -116,13 +112,11 @@ class NextPage
      * @param StoreManagerInterface $storeManager
      * @param CustomerCart $cart
      * @param Config $configHelper
-     *
-     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
-        BundleByPageCollectionFactory $bundleByPage,
-        CategoryCollectionFactory $categoryCollection,
-        ProductCollectionFactory $productCollection,
+        BundleByPageCollectionFactory $bundleByPageCollectionFactory,
+        CategoryCollectionFactory $categoryCollectionFactory,
+        ProductCollectionFactory $productCollectionFactory,
         Stock $stockHelper,
         CheckoutSession $checkoutSession,
         CheckoutHelper $checkoutHelper,
@@ -132,9 +126,9 @@ class NextPage
         CustomerCart $cart,
         ConfigHelper $configHelper
     ) {
-        $this->bundleByPage = $bundleByPage;
-        $this->categoryCollection = $categoryCollection;
-        $this->productCollection = $productCollection;
+        $this->bundleByPageCollectionFactory = $bundleByPageCollectionFactory;
+        $this->categoryCollectionFactory = $categoryCollectionFactory;
+        $this->productCollectionFactory = $productCollectionFactory;
         $this->stockHelper = $stockHelper;
         $this->checkoutSession = $checkoutSession;
         $this->checkoutHelper = $checkoutHelper;
@@ -153,7 +147,7 @@ class NextPage
      */
     public function getNextType($type)
     {
-        $collection = $this->bundleByPage->create();
+        $collection = $this->bundleByPageCollectionFactory->create();
         $collection->getSelect()->join(
             ['type' => $collection->getTable(ResourceBundleByType::TABLE_NAME_BUNDLE_BY_TYPE)],
             'main_table.type_id = type.entity_id AND type.type NOT LIKE "critical_%"',
@@ -179,8 +173,6 @@ class NextPage
      *
      * @param string $type
      * @return string|null
-     *
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function getDefaultPage($type)
     {
@@ -189,9 +181,7 @@ class NextPage
                 return self::DEFAULT_PATHS[$type];
 
             case BundleByType::TYPE_CATEGORY:
-                $configPath = $this->configHelper->getAutoCollectPath($type);
-
-                if (!empty($configPath)) {
+                if (!empty($configPath = $this->configHelper->getAutoCollectPath($type))) {
                     return $configPath;
                 }
 
@@ -199,9 +189,7 @@ class NextPage
                 return empty($entityId) ? null : self::DEFAULT_PATHS[$type] . '/id/' . $entityId;
 
             case BundleByType::TYPE_PRODUCT:
-                $configPath = $this->configHelper->getAutoCollectPath($type);
-
-                if (!empty($configPath)) {
+                if (!empty($configPath = $this->configHelper->getAutoCollectPath($type))) {
                     return $configPath;
                 }
 
@@ -215,15 +203,14 @@ class NextPage
 
             case BundleByType::TYPE_CHECKOUT:
                 if ($this->canCheckout()) {
-                    $configPath = $this->configHelper->getAutoCollectPath($type);
-                    if (!empty($configPath)) {
+                    if (!empty($configPath = $this->configHelper->getAutoCollectPath($type))) {
                         return $configPath;
                     }
 
                     return self::DEFAULT_PATHS[$type];
+                } else {
+                    return self::COLLECT_BUNDLEJS_PATH . '/auto_collect/' . AutoCollect::STATE_CANCELED;
                 }
-
-                return self::COLLECT_BUNDLEJS_PATH . '/auto_collect/' . AutoCollect::STATE_CANCELED;
         }
 
         return null;
@@ -270,7 +257,7 @@ class NextPage
      */
     public function getActiveCategoryId()
     {
-        $categoryCollection = $this->categoryCollection->create();
+        $categoryCollection = $this->categoryCollectionFactory->create();
         $categoryCollection->addFieldToSelect(['is_active', 'children_count']);
         $categoryCollection->addFieldToFilter('is_active', 1);
         $categoryCollection->addFieldToFilter('children_count', ['gt' => 0]);
@@ -283,12 +270,10 @@ class NextPage
      *
      * @param bool $canAddToCart
      * @return mixed
-     *
-     * @SuppressWarnings(PHPMD)
      */
     public function getActiveProductId($canAddToCart = false)
     {
-        $productCollection = $this->productCollection->create();
+        $productCollection = $this->productCollectionFactory->create();
         $storeId = $this->storeManager->getStore()->getId();
 
         $productCollection

@@ -2,7 +2,7 @@
 
 namespace PureMashiro\BundleJs\Source;
 
-class SourceJs
+class Js
 {
     public const DEFER_OUTER_JS = <<< JS
 var runOuterJs = false,

@@ -18,7 +18,7 @@ class AddRequireJsContextsConfig
     /**
      * @var DeploymentVersionStorage
      */
-    private $deployVersionStorage;
+    private $deploymentVersionStorage;
 
     /**
      * @var StoreManagerInterface
@@ -38,7 +38,7 @@ class AddRequireJsContextsConfig
     /**
      * @var GenerateCriticalJsAssets
      */
-    private $genCritJsAssets;
+    private $generateCriticalJsAssets;
 
     /**
      * @var FileDriver
@@ -46,26 +46,26 @@ class AddRequireJsContextsConfig
     private $fileDriver;
 
     /**
-     * @param DeploymentVersionStorage $deployVersionStorage
+     * @param DeploymentVersionStorage $deploymentVersionStorage
      * @param StoreManagerInterface $storeManager
      * @param Design $design
      * @param CacheInterface $cache
-     * @param GenerateCriticalJsAssets $genCritJsAssets
+     * @param GenerateCriticalJsAssets $generateCriticalJsAssets
      * @param FileDriver $fileDriver
      */
     public function __construct(
-        DeploymentVersionStorage $deployVersionStorage,
+        DeploymentVersionStorage $deploymentVersionStorage,
         StoreManagerInterface    $storeManager,
         Design                   $design,
         CacheInterface           $cache,
-        GenerateCriticalJsAssets $genCritJsAssets,
+        GenerateCriticalJsAssets $generateCriticalJsAssets,
         FileDriver               $fileDriver
     ) {
-        $this->deployVersionStorage = $deployVersionStorage;
+        $this->deploymentVersionStorage = $deploymentVersionStorage;
         $this->storeManager = $storeManager;
         $this->design = $design;
         $this->cache = $cache;
-        $this->genCritJsAssets = $genCritJsAssets;
+        $this->generateCriticalJsAssets = $generateCriticalJsAssets;
         $this->fileDriver = $fileDriver;
     }
 
@@ -81,7 +81,7 @@ class AddRequireJsContextsConfig
             return;
         }
 
-        $deploymentVersion = $this->deployVersionStorage->load();
+        $deploymentVersion = $this->deploymentVersionStorage->load();
         $designParams = $this->design->getDesignParams();
         $area = $designParams['area'];
         $theme = $designParams['themeModel']->getThemePath();
@@ -97,7 +97,7 @@ class AddRequireJsContextsConfig
         ];
 
         foreach ($files as $filePath) {
-            $destination = $this->genCritJsAssets->getFileDestination(true, $area, $theme, $locale, $filePath);
+            $destination = $this->generateCriticalJsAssets->getFileDestination(true, $area, $theme, $locale, $filePath);
             if (!$this->fileDriver->isExists($destination)) {
                 continue;
             }
