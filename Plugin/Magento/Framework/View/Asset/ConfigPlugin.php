@@ -29,8 +29,6 @@ class ConfigPlugin
      * @param AssetConfig  $subject
      * @param mixed        $result
      * @return false|mixed
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function afterIsMergeJsFiles(AssetConfig $subject, $result)
     {

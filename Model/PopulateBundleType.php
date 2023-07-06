@@ -17,7 +17,7 @@ class PopulateBundleType implements PopulateBundleTypeInterface
     /**
      * @var ActionPopulateBundleType
      */
-    private $populateBundleType;
+    private $actionPopulateBundleType;
 
     /**
      * @var ConfigHelper
@@ -26,14 +26,14 @@ class PopulateBundleType implements PopulateBundleTypeInterface
 
     /**
      * PopulateBundleType constructor.
-     * @param ActionPopulateBundleType $populateBundleType
+     * @param ActionPopulateBundleType $actionPopulateBundleType
      * @param ConfigHelper $configHelper
      */
     public function __construct(
-        ActionPopulateBundleType $populateBundleType,
+        ActionPopulateBundleType $actionPopulateBundleType,
         ConfigHelper $configHelper
     ) {
-        $this->populateBundleType = $populateBundleType;
+        $this->actionPopulateBundleType = $actionPopulateBundleType;
         $this->configHelper = $configHelper;
     }
 
@@ -48,10 +48,15 @@ class PopulateBundleType implements PopulateBundleTypeInterface
             ];
         }
 
-        $result = $this->populateBundleType->execute();
-
-        return [
-            'success' => !!$result
-        ];
+        $result = $this->actionPopulateBundleType->execute();
+        if ($result) {
+            return [
+                'success' => true
+            ];
+        } else {
+            return [
+                'success' => false
+            ];
+        }
     }
 }

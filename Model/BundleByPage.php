@@ -15,8 +15,6 @@ class BundleByPage extends AbstractModel
 {
     /**
      * @inheritdoc
-     *
-     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      */
     protected function _construct()
     {

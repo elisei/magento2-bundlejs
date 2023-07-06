@@ -20,9 +20,6 @@ use PureMashiro\BundleJs\Model\AutoCollect;
 use PureMashiro\BundleJs\Model\ManualCollect;
 use PureMashiro\BundleJs\Helper\Config as ConfigHelper;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
 class Index extends Action
 {
     /**
@@ -33,7 +30,7 @@ class Index extends Action
     /**
      * @var CookieMetadataFactory
      */
-    private $cookieMetadata;
+    private $cookieMetadataFactory;
 
     /**
      * @var CacheInterface
@@ -69,7 +66,7 @@ class Index extends Action
      * Index constructor.
      * @param Context $context
      * @param CookieManagerInterface $cookieManager
-     * @param CookieMetadataFactory $cookieMetadata
+     * @param CookieMetadataFactory $cookieMetadataFactory
      * @param CacheInterface $cache
      * @param PageFactory $pageFactory
      * @param SessionManagerInterface $session
@@ -79,7 +76,7 @@ class Index extends Action
     public function __construct(
         Context $context,
         CookieManagerInterface $cookieManager,
-        CookieMetadataFactory $cookieMetadata,
+        CookieMetadataFactory $cookieMetadataFactory,
         CacheInterface $cache,
         PageFactory $pageFactory,
         SessionManagerInterface $session,
@@ -88,7 +85,7 @@ class Index extends Action
     ) {
         parent::__construct($context);
         $this->cookieManager = $cookieManager;
-        $this->cookieMetadata = $cookieMetadata;
+        $this->cookieMetadataFactory = $cookieMetadataFactory;
         $this->cache = $cache;
         $this->pageFactory = $pageFactory;
         $this->session = $session;
@@ -226,7 +223,7 @@ class Index extends Action
             return $this->metadata;
         }
 
-        return $this->metadata = $this->cookieMetadata
+        return $this->metadata = $this->cookieMetadataFactory
             ->createPublicCookieMetadata()
             ->setPath('/')
             ->setDuration($lifetime);

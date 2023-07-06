@@ -52,8 +52,6 @@ class GetNextPage
      * @param bool $critical
      * @return string|null
      * @throws \Magento\Framework\Exception\AlreadyExistsException
-     *
-     * @SuppressWarnings(PHPMD)
      */
     public function execute($type, $critical = false)
     {

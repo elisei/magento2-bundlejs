@@ -24,9 +24,6 @@ use PureMashiro\BundleJs\Model\FileManager;
 use PureMashiro\BundleJs\Model\TypeMapper;
 use PureMashiro\BundleJs\Model\Validator\IsAllowedStaticPage;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
 class ConfigPlugin
 {
     /**
@@ -57,7 +54,7 @@ class ConfigPlugin
     /**
      * @var GenerateCriticalJsAssets
      */
-    private $generateCriticaL;
+    private $generateCriticalJsAssets;
 
     /**
      * @var Design
@@ -90,14 +87,12 @@ class ConfigPlugin
      * @param Minification $minification
      * @param ConfigHelper $configHelper
      * @param AssetConfig $assetConfig
-     * @param GenerateCriticalJsAssets $generateCriticaL
+     * @param GenerateCriticalJsAssets $generateCriticalJsAssets
      * @param Design $design
      * @param FileDriver $fileDriver
      * @param RequestInterface $request
      * @param TypeMapper $typeMapper
      * @param IsAllowedStaticPage $isAllowedStaticPage
-     *
-     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
         FileManager              $fileManager,
@@ -105,7 +100,7 @@ class ConfigPlugin
         Minification             $minification,
         ConfigHelper             $configHelper,
         AssetConfig              $assetConfig,
-        GenerateCriticalJsAssets $generateCriticaL,
+        GenerateCriticalJsAssets $generateCriticalJsAssets,
         Design                   $design,
         FileDriver               $fileDriver,
         RequestInterface         $request,
@@ -117,7 +112,7 @@ class ConfigPlugin
         $this->minification = $minification;
         $this->configHelper = $configHelper;
         $this->assetConfig = $assetConfig;
-        $this->generateCriticaL = $generateCriticaL;
+        $this->generateCriticalJsAssets = $generateCriticalJsAssets;
         $this->design = $design;
         $this->fileDriver = $fileDriver;
         $this->request = $request;
@@ -126,13 +121,11 @@ class ConfigPlugin
     }
 
     /**
-     * Set After Layout
+     * After Set Layout.
      *
      * @param HeadConfig $subject
      * @param mixed $result
      * @return mixed
-     *
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function afterSetLayout(HeadConfig $subject, $result)
     {
@@ -145,6 +138,7 @@ class ConfigPlugin
             $minResolver = $this->fileManager->createMinResolverAsset();
             $after = $minResolver->getFilePath();
         }
+
         $requireJsMapConfig = $this->fileManager->createRequireJsMapConfigAsset();
         if ($requireJsMapConfig) {
             $after = $requireJsMapConfig->getFilePath();
@@ -152,13 +146,9 @@ class ConfigPlugin
 
         $assetCollection = $this->pageConfig->getAssetCollection();
 
-        if ($this->configHelper->isDisableBundlesOnStaticPages()
-            && $this->isAllowedStaticPage->validate($subject->getLayout())) {
+        if ($this->configHelper->isDisableBundlesOnStaticPages() && $this->isAllowedStaticPage->validate($subject->getLayout())) {
             $this->insertCriticalJsAssets($assetCollection, $after);
-        }
-        
-        if (!$this->configHelper->isDisableBundlesOnStaticPages()
-        && !$this->isAllowedStaticPage->validate($subject->getLayout())) {
+        } else {
             $bundleAssets = $this->fileManager->createBundleJsPool();
             $staticAsset = $this->fileManager->createStaticJsAsset();
             /** @var \Magento\Framework\View\Asset\File $bundleAsset */
@@ -189,6 +179,8 @@ class ConfigPlugin
     }
 
     /**
+     * Is Enable.
+     *
      * @return bool
      */
     public function isEnable(): bool
@@ -197,8 +189,10 @@ class ConfigPlugin
     }
 
     /**
+     * Insert Critical Js Assets.
+     *
      * @param GroupedCollection $assetCollection
-     * @param $after
+     * @param string $after
      * @return void
      * @throws \Magento\Framework\Exception\FileSystemException
      * @throws \Magento\Framework\Exception\LocalizedException
@@ -232,7 +226,13 @@ class ConfigPlugin
         $locale = $designParams['locale'];
 
         foreach ($files as $filePath) {
-            $destination = $this->generateCriticaL->getFileDestination(false, $area, $theme, $locale, $filePath);
+            $destination = $this->generateCriticalJsAssets->getFileDestination(
+                false,
+                $area,
+                $theme,
+                $locale,
+                $filePath
+            );
             if (!$this->fileDriver->isExists($destination)) {
                 continue;
             }

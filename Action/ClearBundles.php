@@ -28,31 +28,31 @@ class ClearBundles
     /**
      * @var BundleByPageCollectionFactory
      */
-    private $bundleByPage;
+    private $bundleByPageCollectionFactory;
 
     /**
      * @var BundleByTypeCollectionFactory
      */
-    private $bundleByType;
+    private $bundleByTypeCollectionFactory;
 
     /**
      * ClearBundles constructor.
      *
      * @param ResourceBundleByPage $resourceBundleByPage
      * @param ResourceBundleByType $resourceBundleByType
-     * @param BundleByPageCollectionFactory $bundleByPage
-     * @param BundleByTypeCollectionFactory $bundleByType
+     * @param BundleByPageCollectionFactory $bundleByPageCollectionFactory
+     * @param BundleByTypeCollectionFactory $bundleByTypeCollectionFactory
      */
     public function __construct(
         ResourceBundleByPage $resourceBundleByPage,
         ResourceBundleByType $resourceBundleByType,
-        BundleByPageCollectionFactory $bundleByPage,
-        BundleByTypeCollectionFactory $bundleByType
+        BundleByPageCollectionFactory $bundleByPageCollectionFactory,
+        BundleByTypeCollectionFactory $bundleByTypeCollectionFactory
     ) {
         $this->resourceBundleByPage = $resourceBundleByPage;
         $this->resourceBundleByType = $resourceBundleByType;
-        $this->bundleByPage = $bundleByPage;
-        $this->bundleByType = $bundleByType;
+        $this->bundleByPageCollectionFactory = $bundleByPageCollectionFactory;
+        $this->bundleByTypeCollectionFactory = $bundleByTypeCollectionFactory;
     }
 
     /**
@@ -76,7 +76,7 @@ class ClearBundles
     public function clearBundleByPages()
     {
         /** @var \PureMashiro\BundleJs\Model\ResourceModel\BundleByPage\Collection $collection */
-        $collection = $this->bundleByPage->create();
+        $collection = $this->bundleByPageCollectionFactory->create();
         if ($collection->getSize()) {
             foreach ($collection as $bundle) {
                 $bundle->setBundle(null);
@@ -93,7 +93,7 @@ class ClearBundles
     public function clearBundleByTypes()
     {
         /** @var \PureMashiro\BundleJs\Model\ResourceModel\BundleByType\Collection $collection */
-        $collection = $this->bundleByType->create();
+        $collection = $this->bundleByTypeCollectionFactory->create();
         if ($collection->getSize()) {
             foreach ($collection as $bundle) {
                 $bundle->setBundle(null);
